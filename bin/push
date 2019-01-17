@@ -1,0 +1,2 @@
+#!/bin/bash
+gem push $(readlink -f ll-*.gem | sort | tail -n 1 )
