@@ -11,10 +11,13 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{ Listy List }
   spec.homepage      = "https://github.com/zachaysan/ll"
   spec.license       = "MIT"
-  spec.files         = `git ls-files -z lib spec`.split("\x0") + %w( README.markdown LICENSE.txt )
+  spec.files         = `git ls-files -z lib test`.split("\x0") + \
+                       %w( README.markdown LICENSE.txt )
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.test_files    = spec.files.grep(%r{^(test)/})
   spec.require_paths = %w(lib)
+
+  spec.add_dependency 'vv', '~> 0.0'
 
   spec.add_development_dependency "rake", "~> 12"
   spec.add_development_dependency "pry", "~> 0.11"
