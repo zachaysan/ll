@@ -1,10 +1,4 @@
-#!/bin/bash
-find lib/ | \
-  xargs git ls-files --error-unmatch > /dev/null 2>&1 \
-  || ( echo && echo "Warning: A file in lib/ is not tracked by git" && echo )
+#!/usr/bin/env ruby
+require "vv"
 
-rm ll-*.gem
-gem uninstall ll > /dev/null
-bundle
-gem build ll.gemspec
-gem install $(readlink -f ll-*.gem | sort | tail -n 1 ) --pre
+VV::Automate.build name: "ll"
