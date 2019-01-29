@@ -1,2 +1,4 @@
-#!/bin/bash
-gem push $(readlink -f ll-*.gem | sort | tail -n 1 )
+#!/usr/bin/env ruby
+require "vv"
+
+VV::Automate.push name: "ll"
