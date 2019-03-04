@@ -1,2 +1,5 @@
-#!/bin/bash
-rake
+#!/usr/bin/env ruby
+require "pry"
+require "vv"
+
+VV::Automate.run
