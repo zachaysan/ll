@@ -127,10 +127,20 @@ class LL::ListyList
   end
 
   def persist
-    :save_uri
-    :save_checklist
-    :save_schema_changes
-    :sync?
+    self.save_uri
+    self.save_checklist
+    self.save_schema_changes
+    self.sync
+  end
+
+  # TOOD: Implement these
+  def save_uri
+  end
+  def save_checklist
+  end
+  def save_schema_changes
+  end
+  def sync
   end
 
   def loop?
