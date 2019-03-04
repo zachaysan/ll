@@ -1,5 +1,4 @@
-require "minitest/autorun"
-require "ll"
+require_relative "test_helper.rb"
 
 class LLTest < Minitest::Test
 
