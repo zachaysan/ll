@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+require "pry"
+require "ll"
+
+ll = LL::ListyList.new
+ll.loop
