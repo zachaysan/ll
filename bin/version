@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 require "vv"
 
-VV::Automate.version path: "lib/ll/version.rb"
+VV::Automate.version path: "lib/ll/version.rb", argv: ARGV
