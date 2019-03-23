@@ -14,4 +14,15 @@ class LLTest < Minitest::Test
     assert String.vv_included?
   end
 
+  def test_version
+    refute_nil LL::VERSION
+
+    assert_equal LL::VERSION, LL::Version
+    assert_equal LL::VERSION, LL::version
+
+    assert_equal LL::VERSION, LL.VERSION
+    assert_equal LL::VERSION, LL.Version
+    assert_equal LL::VERSION, LL.version
+  end
+
 end
