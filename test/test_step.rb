@@ -17,7 +17,7 @@ class StepTest < Minitest::Test
       "doc_version": "0.0.2",
       "action_at": "2019-02-21T19:41:06Z"}.to_json
 
-    step = LL::Step.new step_input
+    step = LL::Step.new step_input, document_version: nil
     expected_status = "boot"
     assert_equal expected_status, step.status
   end
