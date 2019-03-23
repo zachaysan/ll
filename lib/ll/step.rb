@@ -12,9 +12,11 @@ class LL::Step
               :action_at,
               :version
 
-  def initialize json_document
+  def initialize json_document, document_version:
     # TODO: Auto convert dasherized to underscore
     data = json_document.to_h.symbolize_keys
+
+    @document_version = document_version || LL::VERSION
 
     @title       = data[:title]
     @description = data[:description]
@@ -27,13 +29,28 @@ class LL::Step
     @via         = data[:via]
     @os          = data[:via]
     @with        = data[:via]
-    @doc_version = data[:doc_version]
     @action_at   = data[:action_at]
   end
 
   # This is useful to upgrade formats between versions.
   def reformat
     raise NotImplementedError
+  end
+
+  def to_h
+    { title: title,
+      description: description,
+      action: action,
+      kind: kind,
+      status: status,
+      identifier: identifier,
+      by: by,
+      via: via,
+      action_at: action_at }
+  end
+
+  def vv_json
+    self.to_h.vv_json
   end
 
 end
