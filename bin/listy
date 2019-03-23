@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 require "pry"
 require "ll"
-
+puts
+puts "Booting listy v#{LL::VERSION}"
+puts
 ll = LL::ListyList.new
 ll.loop
