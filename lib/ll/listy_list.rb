@@ -51,15 +51,33 @@ class LL::ListyList
   end
 
   def react
-  end
+    consider @input do
 
-  def show_help
-    self.uri = "/help"
-    @cli.print_help
+      given String.empty_string do
+        self.uri = "/"
+      end
+
+      given "help" do
+        self.uri = "/help"
+      end
+
+      given "install" do
+        self.uri = "/install"
+      end
+
+      within %w[ version v ] do
+        self.uri = "/version"
+      end
+
+      otherwise do
+        self.uri = "/unknown"
+      end
+
+    end
   end
 
   def show_help!
-    self.show_help
+    @cli.print_help
     self.shutdown!
   end
 
@@ -103,6 +121,8 @@ class LL::ListyList
     @cli.data_path.file_join "listy.lock"
   end
 
+  # ZACH WAS HERE: run ./bin/listy and hit lock error. Maybe
+  #                it was me assuming that a lock would have happened?
   def lock_contents
     File.read(lock_path).chomp
   end
@@ -123,7 +143,28 @@ class LL::ListyList
   end
 
   def display
-    puts :display
+    consider self.uri do
+
+      puts self.uri
+
+      given "/help" do
+        @cli.print_help
+      end
+
+      given "/install" do
+        directory = File.pwd.file_join "exe"
+        @cli.install( executable_directory: directory )
+      end
+
+      given "/version" do
+        @cli.print_version
+      end
+
+      given "/unknown" do
+        @cli.print_error command: @input
+      end
+
+    end
   end
 
   def persist
@@ -152,8 +193,8 @@ class LL::ListyList
   end
 
   def await_input
-    input = @cli.await_input message: "hi"
-    input
+    @input = @cli.await_input message: "listy>"
+    @input
   end
 
   # Log this. Maybe incorporate into VV::CLI?
