@@ -1,4 +1,37 @@
 #!/usr/bin/env ruby
 require "vv"
 
-VV::Automate.version path: "lib/ll/version.rb", argv: ARGV
+version_path = "lib/ll/version.rb"
+VV::Automate.version path: version_path, argv: ARGV
+
+version = String.capture_stdout do
+  VV::Automate.version path: version_path, argv: []
+end.chomp
+
+checklist_path = "lib/ll/checklist.rb"
+lines = File.vv_readlines checklist_path
+
+lines.each do |line|
+  exit if line.include? version
+end
+
+puts
+
+message = \
+"New version detected. Automatically support it?"
+  .style :forestgreen
+
+exit unless Readline.prompt_yn message, default: true
+
+start_index = lines.index "  def supported_versions"
+line_count  = lines[start_index..-1].index "  end"
+
+message = "Missing supported_versions from checklist.rb"
+fail message unless start_index && line_count
+
+end_index = start_index + line_count
+
+index = end_index - 1
+lines[index].gsub! " ]", "\n        #{version} ]"
+
+File.vv_write checklist_path, lines
