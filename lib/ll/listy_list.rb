@@ -121,9 +121,8 @@ class LL::ListyList
     @cli.data_path.file_join "listy.lock"
   end
 
-  # ZACH WAS HERE: run ./bin/listy and hit lock error. Maybe
-  #                it was me assuming that a lock would have happened?
   def lock_contents
+    return nil unless lock_path.is_file_path?
     File.read(lock_path).chomp
   end
 
@@ -136,6 +135,8 @@ class LL::ListyList
   end
 
   def unlock
+    return if lock_contents.nil?
+
     message = "Unable to unlock #{lock_path}, contains pid mismatch."
     fail message if lock_contents != Process.pid.to_s
 
