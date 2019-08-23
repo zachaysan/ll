@@ -1,6 +1,9 @@
 require "pry"
 require "vv"
 
+module LL
+end
+
 Gem.require_files "ll/*.rb"
 
 module LL
