@@ -12,8 +12,8 @@ class LL::Checklist
 
   def self.load( dir: )
     filepaths = Dir.glob(File.join dir, "checklists/*")
-    filepaths.each do | filepath |
-      self.new File.read filepath
+    filepaths.map do | filepath |
+      self.new document: File.read(filepath)
     end
   end
 
