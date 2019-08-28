@@ -11,8 +11,17 @@ class LL::ListyList
     @cli   = cli
     @cli ||= VV::CLI.new name: name,
                          version: LL::VERSION,
-                         argv: ARGV
-    self.uri = "/"
+                         argv: ARGV do | option_router |
+
+      option_router.register %w[ --uri --url ],
+                             type: :string do
+
+        %w[ Explicitly sets the uri on boot,
+            overriding saved state or default ].spaced
+
+      end
+
+    end
 
     self.first_boot
   end
@@ -23,6 +32,7 @@ class LL::ListyList
     self.boot! do
       self.show_help!    if @cli.help?
       self.show_version! if @cli.version?
+      self.set_uri!
     end
   end
 
@@ -51,6 +61,9 @@ class LL::ListyList
   end
 
   def react
+
+    self.save_history
+
     consider @input do
 
       given String.empty_string do
@@ -65,15 +78,37 @@ class LL::ListyList
         self.uri = "/install"
       end
 
+      given "show" do
+        self.uri = "/show"
+      end
+
       within %w[ version v ] do
         self.uri = "/version"
       end
 
       otherwise do
+        return if self.select_checklist!
         self.uri = "/unknown"
       end
 
     end
+  end
+
+  def select_checklist!
+    return false unless self.uri == "/show"
+    return false unless @input.number?
+
+    index = @input.to_i!
+
+    if index >= @checklists.size
+      message = "Unknown checklist option `#{index}`"
+      @cli.print_error message
+      return true
+    end
+
+    active_checklist = @checklists[index]
+    title = active_checklist.title.style :forestgreen
+    title.cli_print
   end
 
   def show_help!
@@ -91,6 +126,11 @@ class LL::ListyList
     self.shutdown!
   end
 
+  def set_uri!
+    self.uri   = @cli.option_router.lookup("--uri")
+    self.uri ||= "/"
+  end
+
   def shutdown
     :shutdown_safely
   end
@@ -104,6 +144,7 @@ class LL::ListyList
   end
 
   def load
+    self.load_history
     self.load_schemas
     self.load_checklists
   end
@@ -162,10 +203,21 @@ class LL::ListyList
       end
 
       given "/unknown" do
-        @cli.print_error command: @input
+        message = "Unknown command `#{@input}`."
+        meta = { command: @input, kind: :unknown_command }
+
+        @cli.print_error message, meta: meta
+      end
+
+      given "/show" do
+        @cli.show_options @checklists.map(&:title)
       end
 
     end
+  end
+
+  def print_checklists
+    @checklists.cli_print
   end
 
   def persist
@@ -176,6 +228,10 @@ class LL::ListyList
   end
 
   # TOOD: Implement these
+  def save_history
+  end
+  def load_history
+  end
   def save_uri
   end
   def save_checklist
